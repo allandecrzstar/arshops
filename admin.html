@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>AR SHOPS | Admin Ultra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  <style>
+    body { background-color: #000; color: white; font-family: system-ui, sans-serif; }
+    #adminContent { display: none; }
+    .input-edit { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 10px; border-radius: 12px; font-size: 12px; color: white; outline: none; }
+    .input-edit:focus { border-color: #444; }
+    .card-item { background: rgba(20,20,20,0.5); border: 1px solid #111; padding: 15px; border-radius: 20px; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
+    .card-item:hover { border-color: #333; }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <div id="loginSection" class="max-w-md mx-auto mt-20 bg-zinc-900/40 p-10 rounded-[2.5rem] border border-zinc-800 text-center">
+    <h2 class="text-5xl font-black italic mb-10">AR</h2>
+    <input type="text" id="user" placeholder="Usuario" class="input-edit w-full mb-4 py-4 px-6">
+    <input type="password" id="pass" placeholder="Contraseña" class="input-edit w-full mb-8 py-4 px-6">
+    <button onclick="checkLogin()" class="w-full bg-white text-black font-black py-4 rounded-2xl">ENTRAR</button>
+  </div>
+
+  <div id="adminContent" class="max-w-7xl mx-auto">
+    <header class="flex flex-col lg:flex-row justify-between items-center mb-10 gap-6 bg-zinc-900/20 p-6 rounded-[2rem] border border-zinc-800">
+        <div>
+            <h1 class="text-2xl font-black italic">GESTOR DE CATÁLOGO</h1>
+            <p class="text-zinc-500 text-[10px] uppercase tracking-widest">Ruta: assets/img/...</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="bulkScan()" class="bg-yellow-600 hover:bg-yellow-500 px-4 py-2 rounded-xl font-bold text-[10px] text-white">
+                <i class="fa-solid fa-magnifying-glass mr-1"></i> ESCANEAR CARPETAS (1-50)
+            </button>
+            <button onclick="addNewProduct()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl font-bold text-[10px] text-white">+ MANUAL</button>
+            <button onclick="saveChanges()" class="bg-white text-black px-4 py-2 rounded-xl font-bold text-[10px]">GUARDAR JSON</button>
+            <button onclick="logout()" class="bg-red-900/20 text-red-500 px-4 py-2 rounded-xl"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+    </header>
+
+    <div id="adminGrid" class="space-y-3 pb-20"></div>
+  </div>
+
+  <script>
+    const USER_OK = "alland"; 
+    const PASS_OK = "0811";
+
+    const CATEGORIES = [
+        "accesorios-telefono", "audifonos", "cargadores", "consolas", 
+        "fondo", "gorras", "otros", "play-station", "promos", "ropa", 
+        "ropa-drip", "stardripping", "sueteres", "telefonos", "usados-como-nuevo"
+    ];
+    let products = [];
+
+    function checkLogin() {
+        if(document.getElementById('user').value === USER_OK && document.getElementById('pass').value === PASS_OK) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            loadData();
+        } else { alert("Error."); }
+    }
+
+    async function loadData() {
+        try {
+            const res = await fetch('productos.json?v=' + Date.now());
+            products = await res.json();
+            renderAdmin();
+        } catch(e) { products = []; renderAdmin(); }
+    }
+
+    async function bulkScan() {
+        if(!confirm("Esto buscará fotos del 1 al 50 en todas tus carpetas. ¿Continuar?")) return;
+        
+        let foundCount = 0;
+        for (const cat of CATEGORIES) {
+            for (let i = 1; i <= 50; i++) {
+                const path = `assets/img/${cat}/${i}.jpeg`;
+                const exists = await new Promise(res => {
+                    const img = new Image();
+                    img.onload = () => res(true);
+                    img.onerror = () => res(false);
+                    img.src = path;
+                });
+
+                if (exists) {
+                    if (!products.some(p => p.imagen === path)) {
+                        products.push({
+                            id: Date.now() + Math.random(),
+                            nombre: `${cat.replace('-', ' ')} #${i}`,
+                            categoria: cat,
+                            precio: "0",
+                            imagen: path,
+                            descripcion: "" // Inicializado vacío
+                        });
+                        foundCount++;
+                    }
+                }
+            }
+        }
+        alert(`Escaneo finalizado. Se agregaron ${foundCount} productos nuevos.`);
+        renderAdmin();
+    }
+
+    function renderAdmin() {
+        const container = document.getElementById('adminGrid');
+        container.innerHTML = products.map((p, index) => `
+            <div class="card-item">
+                <img id="preview-${index}" src="${p.imagen}" class="w-16 h-16 object-cover rounded-xl border border-zinc-800" onerror="this.src='https://placehold.co/64x64/111/white?text=X'">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1">
+                    <input type="text" value="${p.nombre}" oninput="update(${index}, 'nombre', this.value)" class="input-edit" placeholder="Nombre">
+                    <input type="text" value="${p.precio}" oninput="update(${index}, 'precio', this.value)" class="input-edit text-green-500" placeholder="Precio">
+                    
+                    <input type="text" value="${p.descripcion || ''}" oninput="update(${index}, 'descripcion', this.value)" class="input-edit text-zinc-400" placeholder="Detalles/Descripción">
+                    
+                    <select onchange="update(${index}, 'categoria', this.value)" class="input-edit">
+                        ${CATEGORIES.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${c.toUpperCase()}</option>`).join('')}
+                    </select>
+                    <input type="text" value="${p.imagen}" oninput="update(${index}, 'imagen', this.value)" class="input-edit text-zinc-500" placeholder="Ruta">
+                </div>
+                <button onclick="remove(${index})" class="text-red-500 px-3"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        `).join('');
+    }
+
+    function update(index, field, val) {
+        products[index][field] = val;
+        if(field === 'imagen') document.getElementById(`preview-${index}`).src = val;
+    }
+
+    function remove(index) {
+        products.splice(index, 1);
+        renderAdmin();
+    }
+
+    function addNewProduct() {
+        products.unshift({ 
+            id: Date.now(), 
+            nombre: "Nuevo", 
+            categoria: "gorras", 
+            precio: "0", 
+            imagen: "assets/img/gorras/1.jpeg",
+            descripcion: "" // Aseguramos que tenga el campo
+        });
+        renderAdmin();
+    }
+
+    function saveChanges() {
+        const data = JSON.stringify(products, null, 2);
+        const blob = new Blob([data], {type: "application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "productos.json";
+        a.click();
+    }
+
+    function logout() { location.reload(); }
+  </script>
+</body>
+</html>

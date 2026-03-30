@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>AR SHOPS | Lo Mejor de Caracas🇻🇪</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  
+  <style>
+    body { 
+        background: black; 
+        color: white; 
+        font-family: system-ui, -apple-system, sans-serif; 
+        overflow-x: hidden; 
+        margin: 0; 
+        transition: background 0.8s ease; 
+    }
+    
+    body.drip-mode { background: radial-gradient(circle at top, #4d0000 0%, #000000 100%) no-repeat fixed; }
+    body.ps-mode { background: radial-gradient(circle at top, #001a3d 0%, #000000 100%) no-repeat fixed; }
+
+    .brand-header { padding: 25px 20px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+    .ar-main { font-size: 45px; font-weight: 900; line-height: 0.6; letter-spacing: -3px; }
+    .shops-sub { font-size: 12px; font-weight: 500; letter-spacing: 11px; color: #a1a1aa; text-transform: uppercase; margin-top: 8px; display: block; }
+
+    .search-container { flex: 1; position: relative; max-width: 300px; }
+    #searchInput {
+        width: 100%; background-color: white; border: none; border-radius: 100px;
+        padding: 10px 15px 10px 35px; color: black; font-size: 12px; font-weight: 700;
+        outline: none; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-categories { 
+        display: flex; gap: 12px; overflow-x: auto; padding: 10px 20px 20px 20px; 
+        scrollbar-width: none; -webkit-overflow-scrolling: touch;
+        align-items: center;
+    }
+    .nav-categories::-webkit-scrollbar { display: none; }
+
+    .cat-link { 
+        background: white; color: black; padding: 8px 18px; border-radius: 50px;
+        font-weight: 800; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+        cursor: pointer; white-space: nowrap; transition: 0.3s;
+        border: 2px solid transparent; flex-shrink: 0;
+    }
+    
+    .cat-link.active { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 12px rgba(255,255,255,0.2); 
+        border-color: #ddd; 
+    }
+
+  /* [SECCIÓN: BOTÓN CATEGORÍA DRIP - OPTIMIZADO PARA PNG] */
+
+  /* [CONTENEDOR DEL BOTÓN - SIN ESPACIOS INTERNOS] */
+.cat-drip { 
+    background: transparent; /* Fondo transparente para que luzca el PNG */
+    border: 2px solid #ff0000 !important; 
+    
+    /* PADDING EN 0: Esto hace que la imagen toque los bordes del botón */
+    padding: 0 !important; 
+    
+    border-radius: 50px;
+    overflow: hidden; /* Corta la imagen si se sale de la forma redondeada */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Ajusta este ancho y alto según qué tan grande quieras el botón */
+    width: 100px; 
+    height: 55px; 
+    
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+/* [LA IMAGEN 66.PNG - ABARCANDO TODA EL ÁREA] */
+.cat-drip-img { 
+    width: 100%; /* Se estira a todo el ancho del botón */
+    height: 100%; /* Se estira a todo el alto del botón */
+    
+    /* 'cover' hace que la imagen llene todo el espacio. 
+       Si prefieres que no se corte nada, usa 'fill' o 'contain' */
+    object-fit: cover; 
+    
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
+    transition: 0.4s ease;
+}
+
+/* Efecto al tocar o pasar el mouse */
+.cat-drip.active, .cat-drip:hover { 
+    border-color: #fff !important; /* El borde se pone blanco al activarse */
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    transform: scale(1.05);
+}
+
+.cat-drip.active .cat-drip-img {
+    filter: brightness(1.2);
+    transform: scale(1.1); /* Un pequeño zoom al activarse */
+}
+
+    .cat-ps { background: #00439c; color: white; border: 2px solid #0072ce; }
+
+    .promo-slider { 
+        position: relative; width: 100%; height: 35vh; overflow: hidden; 
+        transition: all 0.6s ease; 
+    }
+    .promo-slider.hidden-promo { height: 0; opacity: 0; pointer-events: none; margin-bottom: 0; }
+    .slide-item { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out; background-size: cover; background-position: center; cursor: pointer; }
+    .slide-item.active { opacity: 1; }
+    .slider-gradient { 
+        position: absolute; 
+        inset: 0; 
+        background: linear-gradient(to bottom, black 0%, transparent 20%, transparent 80%, black 100%); 
+    }
+
+    .product-card { 
+        background: #080808; border: 1px solid #151515; border-radius: 2rem; 
+        overflow: hidden; transition: 0.3s; 
+    }
+    .lazy-img { opacity: 0; transition: opacity 0.6s ease; }
+    .lazy-img.loaded { opacity: 1; }
+
+    #productModal { 
+        display: none; position: fixed; inset: 0; z-index: 1000; 
+        background: rgba(0,0,0,0.96); backdrop-filter: blur(12px); 
+    }
+
+    /* ANIMACIÓN DESPLIEGUE REDES */
+    #socialContent {
+        animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px) scale(0.5); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+    padding-left: 100%;
+}
+
+/* Para que se vea más pro, le damos un toque de opacidad a los bordes */
+.w-full.bg-black.border-y {
+    border-color: rgba(39, 39, 42, 0.5); /* Color zinc-800 con transparencia */
+}
+  </style>
+</head>
+<body id="mainBody">
+
+  <header class="brand-header">
+    <div class="flex flex-col">
+        <span class="ar-main">AR</span>
+        <span class="shops-sub">Shops</span>
+    </div>
+    
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"></i>
+        <input type="text" id="searchInput" placeholder="BUSCAR...">
+    </div>
+
+    <img src="assets/img/fondo/fondo.jpeg" class="w-[55px] h-[55px] rounded-[18px] object-cover border border-zinc-800">
+  </header>
+<div class="w-full bg-black border-y border-zinc-800 py-2 overflow-hidden whitespace-nowrap">
+    <div class="inline-block animate-marquee text-[10px] font-black tracking-[3px] uppercase text-zinc-300">
+        <i class="fa-solid fa-motorcycle text-red-600 mr-2"></i> DELIVERY A TODA CARACAS — 
+        <i class="fa-solid fa-box-open text-zinc-500 mx-2"></i> ENVÍOS NACIONALES POR MRW — 
+        <i class="fa-solid fa-motorcycle text-red-600 mx-2"></i> DELIVERY A TODA CARACAS — 
+        <i class="fa-solid fa-box-open text-zinc-500 mx-2"></i> ENVÍOS NACIONALES POR MRW
+    </div>
+</div>
+  <section class="promo-slider" id="promoSlider">
+    <div class="slide-item active" style="background-image: url('assets/img/promos/promo1.jpeg')" onclick="window.open('https://wa.me/584120988298?text=HOLA%20AR%20SHOPS%20ESTOY%20INTERESADO%20EN%20LA%20PROMO%201', '_blank')"><div class="slider-gradient"></div></div>
+    <div class="slide-item" style="background-image: url('assets/img/promos/promo2.jpeg')" onclick="window.open('https://wa.me/584120988298?text=HOLA%20AR%20SHOPS%20ESTOY%20INTERESADO%20EN%20LA%20PROMO%202', '_blank')"><div class="slider-gradient"></div></div>
+    <div class="slide-item" style="background-image: url('assets/img/promos/promo3.jpeg')" onclick="window.open('https://wa.me/584120988298?text=HOLA%20AR%20SHOPS%20ESTOY%20INTERESADO%20EN%20LA%20PROMO%203', '_blank')"><div class="slider-gradient"></div></div>
+  </section>
+
+  <nav class="nav-categories" id="catNav">
+    <span onclick="filterProducts('all')" class="cat-link active">Todos</span>
+    <span onclick="filterProducts('stardripping')" class="cat-link cat-drip">
+    <img src="assets/img/logo-redes/66.png" class="cat-drip-img" alt="StarDripping">
+</span>
+    <span onclick="filterProducts('play-station')" class="cat-link cat-ps">
+        <i class="fa-brands fa-playstation mr-1"></i> PS Store
+    </span>
+    <span onclick="filterProducts('gorras')" class="cat-link">Gorras</span>
+    <span onclick="filterProducts('ropa-drip')" class="cat-link">Ropa Drip</span>
+    <span onclick="filterProducts('telefonos')" class="cat-link">Teléfonos</span>
+    <span onclick="filterProducts('accesorios-telefono')" class="cat-link">Accesorios</span>
+    <span onclick="filterProducts('consolas')" class="cat-link">Consolas</span>
+    <span onclick="filterProducts('audifonos')" class="cat-link">Audífonos</span>
+    <span onclick="filterProducts('sueteres')" class="cat-link">Suéteres</span>
+    <span onclick="filterProducts('usados-como-nuevo')" class="cat-link">Usados</span>
+  </nav>
+
+  <main class="px-6 pb-20">
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+  </main>
+
+  <div id="productModal" class="flex flex-col p-6">
+    <button onclick="closeModal()" class="self-end text-white text-5xl p-2">&times;</button>
+    <div class="flex-1 overflow-y-auto flex flex-col items-center justify-center">
+        <img id="modalImg" src="" class="w-full max-w-sm rounded-[3rem] shadow-2xl mb-6 border border-zinc-900">
+        
+        <h2 id="modalName" class="text-4xl font-black text-center uppercase mb-2"></h2>
+        
+        <p id="modalDesc" class="text-zinc-400 text-center text-sm mb-6 px-4 font-medium italic"></p> 
+        
+        <div id="modalPrice" class="text-5xl font-black mb-10 text-white"></div>
+        
+        <a id="modalWS" href="#" target="_blank" class="w-full max-w-md bg-green-600 py-6 rounded-3xl flex items-center justify-center gap-4 font-bold text-xl shadow-xl">
+            <i class="fa-brands fa-whatsapp text-3xl"></i> HACER PEDIDO
+        </a>
+    </div>
+</div>
+    </div>
+  </div>
+
+  <div class="fixed bottom-6 right-6 z-[3000] flex flex-col-reverse items-center gap-4">
+    <div onclick="toggleSocial()" class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer active:scale-90 transition-all border-2 border-zinc-300">
+        <i class="fa-solid fa-plus text-black text-2xl transition-transform duration-300" id="btnIcon"></i>
+    </div>
+
+    <div id="socialContent" class="hidden flex flex-col gap-4 mb-2">
+        <a href="https://wa.me/584120988298?text=HOLA%20AR%20SHOPS%20ESTOY%20INTERESADO%20EN%20SUS%20PRODUCTOS" target="_blank" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-all border border-zinc-200">
+            <img src="assets/img/logo-redes/whatsapp.png" class="w-8 h-8 object-contain">
+        </a>
+        <a href="https://www.instagram.com/arshops777" target="_blank" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-all border border-zinc-200">
+            <img src="assets/img/logo-redes/instagram.png" class="w-8 h-8 object-contain">
+        </a>
+        <a href="https://www.tiktok.com/@arshops777" target="_blank" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-all border border-zinc-200">
+            <img src="assets/img/logo-redes/tiktok.png" class="w-8 h-8 object-contain">
+        </a>
+        <a href="https://www.facebook.com/" target="_blank" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-all border border-zinc-200">
+            <img src="assets/img/logo-redes/facebook.png" class="w-8 h-8 object-contain">
+        </a>
+    </div>
+  </div>
+
+  <script>
+    const WS_LINK = "https://wa.me/584120988298";
+    let allProducts = [];
+
+    async function init() {
+        try {
+            const res = await fetch('productos.json?v=' + Date.now());
+            allProducts = await res.json();
+            render(allProducts);
+        } catch(e) { console.error("Error"); }
+    }
+
+    function render(data) {
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = data.map(p => `
+            <div class="product-card group" onclick="openModal('${p.id}')">
+                <div class="relative overflow-hidden aspect-[4/5] bg-zinc-950">
+                    <img src="${p.imagen}" loading="lazy" onload="this.classList.add('loaded')" class="lazy-img w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg text-white mb-2 uppercase italic tracking-tight">${p.nombre}</h3>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-black text-white">$${p.precio}</span>
+                        <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-black hover:text-green-500 border border-transparent hover:border-green-600 active:scale-90">
+                            <i class="fa-solid fa-plus text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>`).join('');
+    }
+
+    function filterProducts(cat) {
+        const body = document.getElementById('mainBody');
+        const slider = document.getElementById('promoSlider');
+        body.classList.remove('drip-mode', 'ps-mode');
+        slider.classList.remove('hidden-promo');
+
+        if(cat === 'stardripping') {
+            body.classList.add('drip-mode');
+            slider.classList.add('hidden-promo');
+        } else if(cat === 'play-station') {
+            body.classList.add('ps-mode');
+            slider.classList.add('hidden-promo');
+        }
+
+        document.querySelectorAll('.cat-link').forEach(el => el.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        event.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+        if (cat === 'all') render(allProducts);
+        else render(allProducts.filter(p => p.categoria === cat));
+    }
+
+    function toggleSocial() {
+        const content = document.getElementById('socialContent');
+        const icon = document.getElementById('btnIcon');
+        
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.style.transform = 'rotate(45deg)'; 
+        } else {
+            content.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)'; 
+        }
+    }
+
+    let cur = 0;
+    setInterval(() => {
+        const slides = document.querySelectorAll('.slide-item');
+        if(slides.length > 0) {
+            slides[cur].classList.remove('active');
+            cur = (cur + 1) % slides.length;
+            slides[cur].classList.add('active');
+        }
+    }, 4000);
+
+   function openModal(id) {
+    const p = allProducts.find(x => String(x.id) === String(id));
+    if(!p) return;
+    document.getElementById('modalImg').src = p.imagen;
+    document.getElementById('modalName').innerText = p.nombre;
+    
+    // ESTA ES LA ÚNICA LÍNEA QUE AGREGAMOS
+    document.getElementById('modalDesc').innerText = p.descripcion || ""; 
+    
+    document.getElementById('modalPrice').innerText = `$${p.precio}`;
+    const msg = encodeURIComponent(`HOLA AR SHOPS ESTOY INTERESADO EN ESTE PRODUCTO: ${p.nombre.toUpperCase()} PRECIO: $${p.precio}`);
+    document.getElementById('modalWS').href = `${WS_LINK}?text=${msg}`;
+    document.getElementById('productModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+    function closeModal() { document.getElementById('productModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const t = e.target.value.toLowerCase();
+        render(allProducts.filter(p => p.nombre.toLowerCase().includes(t)));
+    });
+
+   // --- SISTEMA DE RASTREO AR SHOPS (GOOGLE SHEET API) ---
+function registrarVisita() {
+    // REEMPLAZA ESTE LINK POR EL TUYO QUE TERMINA EN /exec
+    const urlScript = "https://script.google.com/macros/s/AKfycbwgp3Vxo53vemLcD1UvcaWQhkdgPphrrfKjiP3BlgIie_3jl3-PfHWDWMz3BGl25i-ZuA/exec"; 
+    
+    const infoDispositivo = navigator.userAgent;
+
+    // Enviando los datos de forma silenciosa al Excel
+    fetch(`${urlScript}?user_agent=${encodeURIComponent(infoDispositivo)}`, {
+        mode: 'no-cors'
+    })
+    .then(() => console.log("✅ Visita anotada en el Excel de AR SHOPS"))
+    .catch(e => console.error("❌ Error en el registro"));
+}
+
+// --- ACTIVACIÓN AL CARGAR LA PÁGINA ---
+window.onload = () => {
+    // 1. Ejecuta tu función de productos (asegúrate que se llame init)
+    if (typeof init === "function") {
+        init(); 
+    }
+    
+    // 2. Registra la visita en el Google Sheet
+    registrarVisita();
+}
+  </script>
+  <footer class="bg-zinc-950 border-t border-zinc-900 pt-12 pb-24 px-8 mt-10">
+    <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
+        
+        <div class="mb-8">
+            <span class="text-3xl font-black tracking-tighter">AR <span class="text-zinc-500 font-light tracking-[8px] text-sm uppercase">Shops</span></span>
+        </div>
+
+        <p class="text-zinc-400 text-sm leading-relaxed max-w-md mb-8">
+            Bienvenido a la experiencia AR SHOPS. Somos una TIENDA ONLINE dedicada a traer lo mejor del estilo Drip y tecnología a tus manos.
+        </p>
+
+        <div class="flex items-center gap-2 bg-zinc-900/50 px-5 py-3 rounded-2xl border border-zinc-800 mb-10">
+            <i class="fa-solid fa-location-dot text-red-600"></i>
+            <span class="text-[11px] font-bold uppercase tracking-wider">Entregas Gratis en Plaza Venezuela</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg mb-12">
+            <div class="flex flex-col items-center p-4 rounded-3xl bg-zinc-900/30 border border-zinc-900">
+                <span class="text-[10px] text-zinc-500 uppercase font-black mb-1">Contacto</span>
+                <span class="font-bold text-sm text-white">Alland Córdoba</span>
+                <a href="https://wa.me/584120988298" class="text-zinc-400 text-xs mt-1 hover:text-green-500 transition-colors">0412-0988298</a>
+            </div>
+            <div class="flex flex-col items-center p-4 rounded-3xl bg-zinc-900/30 border border-zinc-900">
+                <span class="text-[10px] text-zinc-500 uppercase font-black mb-1">Contacto</span>
+                <span class="font-bold text-sm text-white">Royer Azuaje</span>
+                <a href="https://wa.me/584149050396" class="text-zinc-400 text-xs mt-1 hover:text-green-500 transition-colors">0414-9050396</a>
+            </div>
+        </div>
+        <div class="mb-12 w-full">
+    <span class="text-[9px] text-zinc-600 uppercase font-black tracking-[6px] mb-6 block text-center">Métodos de Pago</span>
+    <div class="flex justify-center items-center gap-5">
+        
+        <div class="flex flex-col items-center gap-3 group">
+            <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-300">
+                <i class="fa-solid fa-mobile-screen-button text-black text-xl"></i>
+            </div>
+            <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">PM</span>
+        </div>
+
+        <div class="flex flex-col items-center gap-3 group">
+            <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_25_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-300">
+                <i class="fa-solid fa-bolt-lightning text-black text-xl"></i>
+            </div>
+            <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Zelle</span>
+        </div>
+
+        <div class="flex flex-col items-center gap-3 group">
+            <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-300">
+                <i class="fa-solid fa-money-bill-transfer text-black text-xl"></i>
+            </div>
+            <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Efectivo</span>
+        </div>
+
+    </div>
+</div>
+
+        <div class="border-t border-zinc-900 w-full pt-6">
+            <p class="text-[9px] text-zinc-600 uppercase tracking-[4px] font-medium">
+                © 2026 AR SHOPS. Todos los derechos reservados por Alland Córdoba.
+            </p>
+        </div>
+        
+
+    </div>
+</footer>
+</body>
+</html>

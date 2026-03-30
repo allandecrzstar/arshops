@@ -1,0 +1,151 @@
+[
+  {
+    "id": 1774764178593,
+    "nombre": "GORRA HELLSTAR NEGRA",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/1.jpeg",
+    "descripcion": "Gorra hellstar TRILPE a calidad de la mejor color negra"
+  },
+  {
+    "id": 1774764712965.9866,
+    "nombre": "gorras #2",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/2.jpeg"
+  },
+  {
+    "id": 1774764712967.0005,
+    "nombre": "gorras #3",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/3.jpeg"
+  },
+  {
+    "id": 1774764712970.8484,
+    "nombre": "GORRA HELLSTAR NEGRA",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/4.jpeg",
+    "descripcion": "Gorra hellstar TRILPE a calidad de la mejor color ROJA"
+  },
+  {
+    "id": 1774764712972.9893,
+    "nombre": "GORRA SHEIN",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/5.jpeg",
+    "descripcion": "groora de shein nuena calidad"
+  },
+  {
+    "id": 1774764712973.197,
+    "nombre": "gorras #6",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/6.jpeg"
+  },
+  {
+    "id": 1774764714385.1152,
+    "nombre": "IPHONE 13 ",
+    "categoria": "telefonos",
+    "precio": "310",
+    "imagen": "assets/img/telefonos/1.jpeg",
+    "descripcion": "Iphone 13 . sin detalles , 80% de bateria, azul oscuro , (mas detalles preguntar al dm)"
+  },
+  {
+    "id": 1774845215675.311,
+    "nombre": "gorras #7",
+    "categoria": "stardripping",
+    "precio": "20",
+    "imagen": "assets/img/gorras/7.jpeg",
+    "descripcion": "Gorra hellstar TRILPE a calidad de la mejor color VERDE"
+  },
+  {
+    "id": 1774845215919.1257,
+    "nombre": "otros #1",
+    "categoria": "otros",
+    "precio": "40",
+    "imagen": "assets/img/otros/1.jpeg",
+    "descripcion": "tv 100 porciento funcional "
+  },
+  {
+    "id": 1774849036020.6077,
+    "nombre": "xz edx pro x",
+    "categoria": "audifonos",
+    "precio": "20",
+    "imagen": "assets/img/audifonos/1.jpeg",
+    "descripcion": "audifono pro con cancelacion , y los mejores para conocedores"
+  },
+  {
+    "id": 1774849036031.4392,
+    "nombre": "AIRPODS",
+    "categoria": "audifonos",
+    "precio": "25",
+    "imagen": "assets/img/audifonos/2.jpeg",
+    "descripcion": "audifonos mejor calidad a mejor precio"
+  },
+  {
+    "id": 1774849036208.7534,
+    "nombre": "cargadores android",
+    "categoria": "cargadores",
+    "precio": "15",
+    "imagen": "assets/img/cargadores/1.jpeg",
+    "descripcion": "Cargador para android  de 60w "
+  },
+  {
+    "id": 1774849036273.5588,
+    "nombre": "cargadores de iphone ",
+    "categoria": "cargadores",
+    "precio": "20",
+    "imagen": "assets/img/cargadores/2.jpeg",
+    "descripcion": "Cargador de iPhone 25W "
+  },
+  {
+    "id": 1774849073474.236,
+    "nombre": "PLAY STATION 5",
+    "categoria": "play-station",
+    "precio": "650",
+    "imagen": "assets/img/consolas/2.jpeg",
+    "descripcion": "Aprovecha las mm ejores promociones en consolas y videojuegos   🎮Ps5 Slim Digital: 580$ 🎮Ps5 SliDisco: $600 🎮Control original PS5: 95$"
+  },
+  {
+    "id": 1774849073529.831,
+    "nombre": "PLAY STATION 4",
+    "categoria": "play-station",
+    "precio": "250",
+    "imagen": "assets/img/consolas/3.jpeg",
+    "descripcion": "PLAY dos a la mejor oferta pregunten para informacion"
+  },
+  {
+    "id": 1774849073548.5781,
+    "nombre": "CONTROL DE PLAY 3 ",
+    "categoria": "play-station",
+    "precio": "15",
+    "imagen": "assets/img/consolas/4.jpeg",
+    "descripcion": "Controles de play 3 al mejor precio , varios colores , pregunten "
+  },
+  {
+    "id": 1774849800784.259,
+    "nombre": "GATILLOS",
+    "categoria": "otros",
+    "precio": "20",
+    "imagen": "assets/img/accesorios-telefono/1.jpeg",
+    "descripcion": "GATILLOS , CON LOS MEJOR PARA TUS JUEGOS "
+  },
+  {
+    "id": 1774849800803.507,
+    "nombre": "SUETER HELLSTAR",
+    "categoria": "sueteres",
+    "precio": "30",
+    "imagen": "assets/img/accesorios-telefono/2.jpeg",
+    "descripcion": "SUETERES MEJOR CALIDAD"
+  },
+  {
+    "id": 1774850139543.0176,
+    "nombre": "PLAY STATION 2 ",
+    "categoria": "play-station",
+    "precio": "50",
+    "imagen": "assets/img/usados-como-nuevo/5.jpeg",
+    "descripcion": "PLAY 2 SIN DETALLES , DOS CONTROLES, SINDETALLES PREGUNTEN"
+  }
+]
