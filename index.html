@@ -51,54 +51,34 @@
         border-color: #ddd; 
     }
 
-  /* [SECCIÓN: BOTÓN CATEGORÍA DRIP - OPTIMIZADO PARA PNG] */
+    .cat-drip { 
+        background: transparent; 
+        border: 2px solid #ff0000 !important; 
+        padding: 0 !important; 
+        border-radius: 50px;
+        overflow: hidden; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px; 
+        height: 55px; 
+        transition: 0.3s ease;
+        cursor: pointer;
+    }
 
-  /* [CONTENEDOR DEL BOTÓN - SIN ESPACIOS INTERNOS] */
-.cat-drip { 
-    background: transparent; /* Fondo transparente para que luzca el PNG */
-    border: 2px solid #ff0000 !important; 
-    
-    /* PADDING EN 0: Esto hace que la imagen toque los bordes del botón */
-    padding: 0 !important; 
-    
-    border-radius: 50px;
-    overflow: hidden; /* Corta la imagen si se sale de la forma redondeada */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    /* Ajusta este ancho y alto según qué tan grande quieras el botón */
-    width: 100px; 
-    height: 55px; 
-    
-    transition: 0.3s ease;
-    cursor: pointer;
-}
+    .cat-drip-img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
+        transition: 0.4s ease;
+    }
 
-/* [LA IMAGEN 66.PNG - ABARCANDO TODA EL ÁREA] */
-.cat-drip-img { 
-    width: 100%; /* Se estira a todo el ancho del botón */
-    height: 100%; /* Se estira a todo el alto del botón */
-    
-    /* 'cover' hace que la imagen llene todo el espacio. 
-       Si prefieres que no se corte nada, usa 'fill' o 'contain' */
-    object-fit: cover; 
-    
-    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
-    transition: 0.4s ease;
-}
-
-/* Efecto al tocar o pasar el mouse */
-.cat-drip.active, .cat-drip:hover { 
-    border-color: #fff !important; /* El borde se pone blanco al activarse */
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-    transform: scale(1.05);
-}
-
-.cat-drip.active .cat-drip-img {
-    filter: brightness(1.2);
-    transform: scale(1.1); /* Un pequeño zoom al activarse */
-}
+    .cat-drip.active, .cat-drip:hover { 
+        border-color: #fff !important; 
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        transform: scale(1.05);
+    }
 
     .cat-ps { background: #00439c; color: white; border: 2px solid #0072ce; }
 
@@ -123,39 +103,30 @@
     .lazy-img.loaded { opacity: 1; }
 
     #productModal { 
-        display: none; position: fixed; inset: 0; z-index: 1000; 
+        display: none; position: fixed; inset: 0; z-index: 5000; 
         background: rgba(0,0,0,0.96); backdrop-filter: blur(12px); 
     }
 
-    /* ANIMACIÓN DESPLIEGUE REDES */
-    #socialContent {
-        animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px) scale(0.5); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-@keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+    .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; padding-left: 100%; }
 
-.animate-marquee {
-    display: inline-block;
-    white-space: nowrap;
-    animation: marquee 20s linear infinite;
-    padding-left: 100%;
-}
+    /* --- ESTILOS AGREGADOS (CARRITO Y CHAT) --- */
+    #cartPanel {
+        position: fixed; top: 0; right: -100%; width: 100%; max-width: 380px; height: 100%;
+        background: #000; border-left: 1px solid #222; z-index: 6000; transition: 0.4s ease;
+        display: flex; flex-direction: column;
+    }
+    #cartPanel.open { right: 0; }
+    .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px; border-bottom: 1px solid #111; }
+    .ar-msg { background: #111; border: 1px solid #222; border-radius: 15px 15px 15px 0; padding: 10px; margin-bottom: 10px; align-self: flex-start; max-width: 85%; font-size: 11px; color: #ccc; }
+    .user-msg { background: #dc2626; color: white; border-radius: 15px 15px 0 15px; padding: 10px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; font-size: 11px; font-weight: bold; }
+    /* --- FIN ESTILOS AGREGADOS --- */
 
-/* Para que se vea más pro, le damos un toque de opacidad a los bordes */
-.w-full.bg-black.border-y {
-    border-color: rgba(39, 39, 42, 0.5); /* Color zinc-800 con transparencia */
-}
   </style>
 </head>
 <body id="mainBody">
 
-  <header class="brand-header">
+<header class="brand-header">
     <div class="flex flex-col">
         <span class="ar-main">AR</span>
         <span class="shops-sub">Shops</span>
@@ -166,16 +137,24 @@
         <input type="text" id="searchInput" placeholder="BUSCAR...">
     </div>
 
-    <img src="assets/img/fondo/fondo.jpeg" class="w-[55px] h-[55px] rounded-[18px] object-cover border border-zinc-800">
+    <div class="flex items-center gap-4">
+        <div class="relative cursor-pointer p-2" onclick="toggleCart()">
+            <i class="fa-solid fa-bag-shopping text-2xl text-white"></i>
+            <span id="cartBadge" class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-black hidden">0</span>
+        </div>
+        <img src="assets/img/fondo/fondo.jpeg" class="w-[50px] h-[50px] rounded-[15px] object-cover border border-zinc-800">
+    </div>
   </header>
+
 <div class="w-full bg-black border-y border-zinc-800 py-2 overflow-hidden whitespace-nowrap">
     <div class="inline-block animate-marquee text-[10px] font-black tracking-[3px] uppercase text-zinc-300">
         <i class="fa-solid fa-motorcycle text-red-600 mr-2"></i> DELIVERY A TODA CARACAS — 
         <i class="fa-solid fa-box-open text-zinc-500 mx-2"></i> ENVÍOS NACIONALES POR MRW — 
-        <i class="fa-solid fa-motorcycle text-red-600 mx-2"></i> DELIVERY A TODA CARACAS — 
+        <i class="fa-solid fa-motorcycle text-red-600 mr-2"></i> DELIVERY A TODA CARACAS — 
         <i class="fa-solid fa-box-open text-zinc-500 mx-2"></i> ENVÍOS NACIONALES POR MRW
     </div>
 </div>
+
   <section class="promo-slider" id="promoSlider">
     <div class="slide-item active" style="background-image: url('assets/img/promos/promo1.jpeg')" onclick="window.open('https://wa.me/584120988298?text=HOLA%20AR%20SHOPS%20ESTOY%20INTERESADO%20EN%20LA%20PROMO%201', '_blank')"><div class="slider-gradient"></div></div>
     <div class="slide-item" style="background-image: url('assets/img/promos/promo2.jpeg')" onclick="window.open('https://wa.me/584120988298?text=HOLA%20AR%20SHOPS%20ESTOY%20INTERESADO%20EN%20LA%20PROMO%202', '_blank')"><div class="slider-gradient"></div></div>
@@ -185,8 +164,8 @@
   <nav class="nav-categories" id="catNav">
     <span onclick="filterProducts('all')" class="cat-link active">Todos</span>
     <span onclick="filterProducts('stardripping')" class="cat-link cat-drip">
-    <img src="assets/img/logo-redes/66.png" class="cat-drip-img" alt="StarDripping">
-</span>
+        <img src="assets/img/logo-redes/66.png" class="cat-drip-img" alt="StarDripping">
+    </span>
     <span onclick="filterProducts('play-station')" class="cat-link cat-ps">
         <i class="fa-brands fa-playstation mr-1"></i> PS Store
     </span>
@@ -208,19 +187,51 @@
     <button onclick="closeModal()" class="self-end text-white text-5xl p-2">&times;</button>
     <div class="flex-1 overflow-y-auto flex flex-col items-center justify-center">
         <img id="modalImg" src="" class="w-full max-w-sm rounded-[3rem] shadow-2xl mb-6 border border-zinc-900">
-        
         <h2 id="modalName" class="text-4xl font-black text-center uppercase mb-2"></h2>
-        
         <p id="modalDesc" class="text-zinc-400 text-center text-sm mb-6 px-4 font-medium italic"></p> 
-        
         <div id="modalPrice" class="text-5xl font-black mb-10 text-white"></div>
         
-        <a id="modalWS" href="#" target="_blank" class="w-full max-w-md bg-green-600 py-6 rounded-3xl flex items-center justify-center gap-4 font-bold text-xl shadow-xl">
-            <i class="fa-brands fa-whatsapp text-3xl"></i> HACER PEDIDO
+        <button onclick="addToCart()" class="w-full max-w-md bg-red-600 py-6 rounded-3xl font-bold text-xl mb-4 shadow-xl active:scale-95 transition-all">
+            AÑADIR AL CARRITO
+        </button>
+
+        <a id="modalWS" href="#" target="_blank" class="w-full max-w-md bg-green-600 py-4 rounded-2xl flex items-center justify-center gap-4 font-bold text-lg shadow-xl">
+            <i class="fa-brands fa-whatsapp text-2xl"></i> CONSULTAR WHATSAPP
         </a>
     </div>
-</div>
-    </div>
+  </div>
+
+  <div id="cartPanel">
+      <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
+          <h3 class="font-black text-xl uppercase">Tu Carrito</h3>
+          <button onclick="toggleCart()" class="text-4xl">&times;</button>
+      </div>
+      <div id="cartItems" class="flex-1 overflow-y-auto p-4"></div>
+      <div class="p-6 bg-zinc-950 border-t border-zinc-800">
+          <div class="flex justify-between items-center mb-6">
+              <span class="text-xl font-black">TOTAL:</span>
+              <span id="totalPrice" class="text-3xl font-black">$0</span>
+          </div>
+          <button onclick="checkout()" class="w-full bg-green-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
+              <i class="fa-brands fa-whatsapp text-xl"></i> ENVIAR PEDIDO
+          </button>
+      </div>
+  </div>
+
+  <div onclick="toggleChat()" class="fixed bottom-6 left-6 z-[4000] w-14 h-14 bg-red-600 rounded-full flex items-center justify-center border-2 border-white shadow-2xl cursor-pointer">
+      <i class="fa-solid fa-robot text-white text-xl"></i>
+  </div>
+
+  <div id="chat-window" class="hidden fixed bottom-24 left-6 z-[4000] w-[300px] h-[400px] bg-black border border-zinc-800 rounded-[2rem] flex flex-col overflow-hidden shadow-2xl">
+      <div class="bg-zinc-900 p-4 flex justify-between items-center border-b border-zinc-800">
+          <span class="text-[10px] font-black uppercase tracking-widest">AR Assistant 🇻🇪</span>
+          <button onclick="toggleChat()" class="text-zinc-500 text-2xl">&times;</button>
+      </div>
+      <div id="chatContainer" class="flex-1 p-4 overflow-y-auto flex flex-col gap-2"></div>
+      <div class="p-3 bg-zinc-900 flex gap-2">
+          <input type="text" id="aiInput" onkeypress="if(event.key==='Enter') askAI()" placeholder="Habla mano..." class="flex-1 bg-black border border-zinc-800 rounded-full px-4 py-2 text-xs text-white outline-none">
+          <button onclick="askAI()" class="bg-white text-black w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+      </div>
   </div>
 
   <div class="fixed bottom-6 right-6 z-[3000] flex flex-col-reverse items-center gap-4">
@@ -246,14 +257,15 @@
 
   <script>
     const WS_LINK = "https://wa.me/584120988298";
-    let allProducts = [];
+    const API_KEY = "AIzaSyB01-1pr49PCjTJaYe-Wm15ZyNng-Ddb2s"; // API Gemini
+    let allProducts = [], cart = [], selectedId = null;
 
     async function init() {
         try {
             const res = await fetch('productos.json?v=' + Date.now());
             allProducts = await res.json();
             render(allProducts);
-        } catch(e) { console.error("Error"); }
+        } catch(e) { console.error("Error al cargar productos"); }
     }
 
     function render(data) {
@@ -267,12 +279,67 @@
                     <h3 class="font-bold text-lg text-white mb-2 uppercase italic tracking-tight">${p.nombre}</h3>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-black text-white">$${p.precio}</span>
-                        <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-black hover:text-green-500 border border-transparent hover:border-green-600 active:scale-90">
+                        <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center shadow-lg transition-all duration-300 active:scale-90">
                             <i class="fa-solid fa-plus text-sm"></i>
                         </div>
                     </div>
                 </div>
             </div>`).join('');
+    }
+
+    function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
+    function toggleChat() { document.getElementById('chat-window').classList.toggle('hidden'); }
+
+    function addToCart() {
+        const p = allProducts.find(x => String(x.id) === String(selectedId));
+        if(p) {
+            cart.push(p);
+            updateCartUI();
+            closeModal();
+            toggleCart();
+        }
+    }
+
+    function updateCartUI() {
+        const cont = document.getElementById('cartItems');
+        const badge = document.getElementById('cartBadge');
+        const totalEl = document.getElementById('totalPrice');
+        cont.innerHTML = cart.map((p, i) => `
+            <div class="cart-item">
+                <img src="${p.imagen}" class="w-12 h-12 rounded-lg object-cover">
+                <div class="flex-1 text-[10px] font-bold uppercase">${p.nombre}<br>$${p.precio}</div>
+                <button onclick="cart.splice(${i},1);updateCartUI();" class="text-red-500 text-2xl">&times;</button>
+            </div>`).join('');
+        let total = cart.reduce((acc, p) => acc + parseFloat(p.precio), 0);
+        totalEl.innerText = `$${total}`;
+        badge.innerText = cart.length;
+        badge.classList.toggle('hidden', cart.length === 0);
+    }
+
+    function checkout() {
+        if(cart.length === 0) return alert("El carrito está vacío");
+        let items = cart.map(p => `- ${p.nombre} ($${p.precio})`).join('%0A');
+        let msg = `🔥 *PEDIDO AR SHOPS*%0A${items}%0A%0A*TOTAL:* ${document.getElementById('totalPrice').innerText}`;
+        window.open(`${WS_LINK}?text=${msg}`, '_blank');
+    }
+
+    async function askAI() {
+        const input = document.getElementById('aiInput');
+        const text = input.value.trim(); if(!text) return;
+        const cont = document.getElementById('chatContainer');
+        cont.innerHTML += `<div class="user-msg">${text}</div>`;
+        input.value = "";
+        try {
+            const list = allProducts.slice(0,8).map(p => p.nombre).join(", ");
+            const prompt = `Eres el asistente de AR SHOPS. Habla con flow de Caracas (usa mano, menor, activo). Vende estos productos: ${list}. Pregunta: ${text}`;
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
+            });
+            const data = await res.json();
+            cont.innerHTML += `<div class="ar-msg">${data.candidates[0].content.parts[0].text}</div>`;
+        } catch(e) { cont.innerHTML += `<div class="ar-msg">Mano, el internet me está fallando, pregúntame otra vez.</div>`; }
+        cont.scrollTop = cont.scrollHeight;
     }
 
     function filterProducts(cat) {
@@ -300,7 +367,6 @@
     function toggleSocial() {
         const content = document.getElementById('socialContent');
         const icon = document.getElementById('btnIcon');
-        
         if (content.classList.contains('hidden')) {
             content.classList.remove('hidden');
             icon.style.transform = 'rotate(45deg)'; 
@@ -321,14 +387,12 @@
     }, 4000);
 
    function openModal(id) {
+    selectedId = id;
     const p = allProducts.find(x => String(x.id) === String(id));
     if(!p) return;
     document.getElementById('modalImg').src = p.imagen;
     document.getElementById('modalName').innerText = p.nombre;
-    
-    // ESTA ES LA ÚNICA LÍNEA QUE AGREGAMOS
     document.getElementById('modalDesc').innerText = p.descripcion || ""; 
-    
     document.getElementById('modalPrice').innerText = `$${p.precio}`;
     const msg = encodeURIComponent(`HOLA AR SHOPS ESTOY INTERESADO EN ESTE PRODUCTO: ${p.nombre.toUpperCase()} PRECIO: $${p.precio}`);
     document.getElementById('modalWS').href = `${WS_LINK}?text=${msg}`;
@@ -343,95 +407,64 @@
         render(allProducts.filter(p => p.nombre.toLowerCase().includes(t)));
     });
 
-   // --- SISTEMA DE RASTREO AR SHOPS (GOOGLE SHEET API) ---
 function registrarVisita() {
-    // REEMPLAZA ESTE LINK POR EL TUYO QUE TERMINA EN /exec
     const urlScript = "https://script.google.com/macros/s/AKfycbwgp3Vxo53vemLcD1UvcaWQhkdgPphrrfKjiP3BlgIie_3jl3-PfHWDWMz3BGl25i-ZuA/exec"; 
-    
     const infoDispositivo = navigator.userAgent;
-
-    // Enviando los datos de forma silenciosa al Excel
-    fetch(`${urlScript}?user_agent=${encodeURIComponent(infoDispositivo)}`, {
-        mode: 'no-cors'
-    })
-    .then(() => console.log("✅ Visita anotada en el Excel de AR SHOPS"))
-    .catch(e => console.error("❌ Error en el registro"));
+    fetch(`${urlScript}?user_agent=${encodeURIComponent(infoDispositivo)}`, { mode: 'no-cors' })
+    .then(() => console.log("✅ Visita anotada"))
+    .catch(e => console.error("❌ Error registro"));
 }
 
-// --- ACTIVACIÓN AL CARGAR LA PÁGINA ---
 window.onload = () => {
-    // 1. Ejecuta tu función de productos (asegúrate que se llame init)
-    if (typeof init === "function") {
-        init(); 
-    }
-    
-    // 2. Registra la visita en el Google Sheet
+    if (typeof init === "function") init(); 
     registrarVisita();
 }
   </script>
+
   <footer class="bg-zinc-950 border-t border-zinc-900 pt-12 pb-24 px-8 mt-10">
     <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
-        
         <div class="mb-8">
             <span class="text-3xl font-black tracking-tighter">AR <span class="text-zinc-500 font-light tracking-[8px] text-sm uppercase">Shops</span></span>
         </div>
-
         <p class="text-zinc-400 text-sm leading-relaxed max-w-md mb-8">
             Bienvenido a la experiencia AR SHOPS. Somos una TIENDA ONLINE dedicada a traer lo mejor del estilo Drip y tecnología a tus manos.
         </p>
-
         <div class="flex items-center gap-2 bg-zinc-900/50 px-5 py-3 rounded-2xl border border-zinc-800 mb-10">
             <i class="fa-solid fa-location-dot text-red-600"></i>
             <span class="text-[11px] font-bold uppercase tracking-wider">Entregas Gratis en Plaza Venezuela</span>
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg mb-12">
             <div class="flex flex-col items-center p-4 rounded-3xl bg-zinc-900/30 border border-zinc-900">
                 <span class="text-[10px] text-zinc-500 uppercase font-black mb-1">Contacto</span>
-                <span class="font-bold text-sm text-white">ATENCION 1</span>
-                <a href="https://wa.me/584120988298" class="text-zinc-400 text-xs mt-1 hover:text-green-500 transition-colors">0412-0988298</a>
+                <span class="font-bold text-sm text-white">Alland Córdoba</span>
+                <a href="https://wa.me/584120988298" class="text-zinc-400 text-xs mt-1 hover:text-green-500">0412-0988298</a>
             </div>
             <div class="flex flex-col items-center p-4 rounded-3xl bg-zinc-900/30 border border-zinc-900">
                 <span class="text-[10px] text-zinc-500 uppercase font-black mb-1">Contacto</span>
-                <span class="font-bold text-sm text-white">ATENCION 2</span>
-                <a href="https://wa.me/584149050396" class="text-zinc-400 text-xs mt-1 hover:text-green-500 transition-colors">0414-9050396</a>
+                <span class="font-bold text-sm text-white">Royer Azuaje</span>
+                <a href="https://wa.me/584149050396" class="text-zinc-400 text-xs mt-1 hover:text-green-500">0414-9050396</a>
             </div>
         </div>
         <div class="mb-12 w-full">
-    <span class="text-[9px] text-zinc-600 uppercase font-black tracking-[6px] mb-6 block text-center">Métodos de Pago</span>
-    <div class="flex justify-center items-center gap-5">
-        
-        <div class="flex flex-col items-center gap-3 group">
-            <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-300">
-                <i class="fa-solid fa-mobile-screen-button text-black text-xl"></i>
+            <span class="text-[9px] text-zinc-600 uppercase font-black tracking-[6px] mb-6 block text-center">Métodos de Pago</span>
+            <div class="flex justify-center items-center gap-5">
+                <div class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-lg"><i class="fa-solid fa-mobile-screen-button text-black text-xl"></i></div>
+                    <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">PM</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-lg"><i class="fa-solid fa-bolt-lightning text-black text-xl"></i></div>
+                    <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Zelle</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-lg"><i class="fa-solid fa-money-bill-transfer text-black text-xl"></i></div>
+                    <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Efectivo</span>
+                </div>
             </div>
-            <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">PM</span>
         </div>
-
-        <div class="flex flex-col items-center gap-3 group">
-            <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_25_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-300">
-                <i class="fa-solid fa-bolt-lightning text-black text-xl"></i>
-            </div>
-            <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Zelle</span>
-        </div>
-
-        <div class="flex flex-col items-center gap-3 group">
-            <div class="w-14 h-14 bg-white rounded-[20px] flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-300">
-                <i class="fa-solid fa-money-bill-transfer text-black text-xl"></i>
-            </div>
-            <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Efectivo</span>
-        </div>
-
-    </div>
-</div>
-
         <div class="border-t border-zinc-900 w-full pt-6">
-            <p class="text-[9px] text-zinc-600 uppercase tracking-[4px] font-medium">
-                © 2026 AR SHOPS. Todos los derechos reservados.
-            </p>
+            <p class="text-[9px] text-zinc-600 uppercase tracking-[4px] font-medium">© 2026 AR SHOPS. Todos los derechos reservados por Alland Córdoba.</p>
         </div>
-        
-
     </div>
 </footer>
 </body>
