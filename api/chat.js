@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // 1. Solo permitimos peticiones POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
@@ -7,15 +6,15 @@ export default async function handler(req, res) {
   const { text, prompt } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
-  // 2. Verificamos si la clave existe en Vercel
   if (!apiKey) {
     return res.status(500).json({ 
-      candidates: [{ content: { parts: [{ text: "Mano, la clave GEMINI_API_KEY no está configurada en Vercel." }] } }] 
+      candidates: [{ content: { parts: [{ text: "Mano, falta la clave en Vercel." }] } }] 
     });
   }
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // CAMBIAMOS EL MODELO A gemini-pro QUE ES EL MÁS ESTABLE PARA ESTO
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -25,7 +24,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // 3. Si Google devuelve un error (ej. clave inválida)
     if (data.error) {
       return res.status(400).json({ 
         candidates: [{ content: { parts: [{ text: "Error de Google: " + data.error.message }] } }] 
