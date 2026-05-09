@@ -4,28 +4,42 @@ export default async function handler(req, res) {
   const { text, prompt } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
-  try {
-    // CAMBIO CLAVE: Usamos la v1 (ESTABLE) y el modelo gemini-1.5-flash (SIN EL LATEST)
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt + text }] }]
-      })
-    });
+  // Lista de modelos a probar (del más nuevo al más compatible)
+  const models = [
+    "gemini-1.5-flash",
+    "gemini-pro"
+  ];
 
-    const data = await response.json();
-
-    if (data.error) {
-      return res.status(200).json({ 
-        candidates: [{ content: { parts: [{ text: "Mano, Google dice: " + data.error.message }] } }] 
+  for (const model of models) {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt + text }] }]
+        })
       });
-    }
 
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({ 
-      candidates: [{ content: { parts: [{ text: "Error de conexión, mano." }] } }] 
-    });
+      const data = await response.json();
+
+      // Si este modelo funcionó, enviamos la respuesta y cortamos el ciclo
+      if (data.candidates) {
+        return res.status(200).json(data);
+      }
+      
+      // Si el error es de clave, paramos de una vez
+      if (data.error && data.error.message.includes("API key")) {
+        return res.status(200).json({ 
+          candidates: [{ content: { parts: [{ text: "Mano, la clave API está mal copiada o es inválida." }] } }] 
+        });
+      }
+    } catch (e) {
+      continue; // Si falla este modelo, intenta con el siguiente
+    }
   }
+
+  // Si llegamos aquí es que nada funcionó
+  res.status(200).json({ 
+    candidates: [{ content: { parts: [{ text: "Mano, Google sigue sin reconocer los modelos. Revisa si activaste Gemini en AI Studio." }] } }] 
+  });
 }
