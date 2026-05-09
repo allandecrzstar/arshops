@@ -257,7 +257,7 @@
 
   <script>
     const WS_LINK = "https://wa.me/584120988298";
-    const API_KEY = "AIzaSyAy_iEvOV2vle4bZUxoRjNBDxDg33UnwyM"; // API Gemini
+    const API_KEY = ""; // API Gemini
     let allProducts = [], cart = [], selectedId = null;
 
     async function init() {
@@ -321,24 +321,35 @@
         let items = cart.map(p => `- ${p.nombre} ($${p.precio})`).join('%0A');
         let msg = `🔥 *PEDIDO AR SHOPS*%0A${items}%0A%0A*TOTAL:* ${document.getElementById('totalPrice').innerText}`;
         window.open(`${WS_LINK}?text=${msg}`, '_blank');
-    }
+    } // <--- REVISA QUE ESTA LLAVE ESTÉ AQUÍ
 
     async function askAI() {
         const input = document.getElementById('aiInput');
-        const text = input.value.trim(); if(!text) return;
+        const text = input.value.trim(); 
+        if(!text) return;
+        
         const cont = document.getElementById('chatContainer');
         cont.innerHTML += `<div class="user-msg">${text}</div>`;
         input.value = "";
+        
         try {
-            const list = allProducts.slice(0,8).map(p => p.nombre).join(", ");
-            const prompt = `Eres el asistente de AR SHOPS. Habla con flow de Caracas (usa mano, menor, activo). Vende estos productos: ${list}. Pregunta: ${text}`;
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
+            const list = allProducts.slice(0,10).map(p => p.nombre).join(", ");
+            const prompt = `Eres el asistente de AR SHOPS. Habla con flow de Caracas (usa mano, menor, activo). Vende estos productos: ${list}. Pregunta: `;
+
+            // Cambiamos la llamada directa a Google por tu API de Vercel
+            const res = await fetch('/api/chat', {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: text, prompt: prompt })
             });
+            
             const data = await res.json();
-            cont.innerHTML += `<div class="ar-msg">${data.candidates[0].content.parts[0].text}</div>`;
-        } catch(e) { cont.innerHTML += `<div class="ar-msg">Mano, el internet me está fallando, pregúntame otra vez.</div>`; }
+            if (data.candidates && data.candidates[0]) {
+                cont.innerHTML += `<div class="ar-msg">${data.candidates[0].content.parts[0].text}</div>`;
+            } else { throw new Error(); }
+        } catch(e) { 
+            cont.innerHTML += `<div class="ar-msg">Mano, sigo sin señal. Revisa que pusiste la clave en Vercel.</div>`; 
+        }
         cont.scrollTop = cont.scrollHeight;
     }
 
