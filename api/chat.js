@@ -13,8 +13,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // CAMBIAMOS EL MODELO A gemini-pro QUE ES EL MÁS ESTABLE PARA ESTO
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    // Usamos la v1 (versión estable) y el modelo flash que es el que vuela
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
