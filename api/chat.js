@@ -1,20 +1,12 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'No permitido' });
 
   const { text, prompt } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
-  if (!apiKey) {
-    return res.status(500).json({ 
-      candidates: [{ content: { parts: [{ text: "Mano, falta la clave en Vercel." }] } }] 
-    });
-  }
-
   try {
-    // Usamos la v1 (versión estable) y el modelo flash que es el que vuela
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // Probamos con la ruta de la v1beta pero con el modelo flash-latest que es el que siempre está activo
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -25,15 +17,15 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (data.error) {
-      return res.status(400).json({ 
-        candidates: [{ content: { parts: [{ text: "Error de Google: " + data.error.message }] } }] 
+      return res.status(200).json({ 
+        candidates: [{ content: { parts: [{ text: "Mano, Google dice: " + data.error.message }] } }] 
       });
     }
 
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ 
-      candidates: [{ content: { parts: [{ text: "Error de conexión, mano. Intenta de nuevo." }] } }] 
+      candidates: [{ content: { parts: [{ text: "Error de conexión, mano." }] } }] 
     });
   }
 }
